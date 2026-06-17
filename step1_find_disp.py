@@ -31,7 +31,7 @@ openFileDialog.ShowModal()
 file_path_list = openFileDialog.GetPaths()
 openFileDialog.Destroy()
 
-disp_thre = 7
+disp_thre = 10
 
 for file_path in file_path_list:
 
@@ -41,7 +41,7 @@ for file_path in file_path_list:
     total_frame = total_frame.item()
     total_mol_num = total_mol_num.item()
     
-    estimated_total_num = 50*total_frame
+    estimated_total_num = 100*total_frame
     result_array_x_start = np.zeros(estimated_total_num,dtype=np.float32)
     result_array_y_start = np.zeros(estimated_total_num,dtype=np.float32)
     result_array_x_end = np.zeros(estimated_total_num,dtype=np.float32)

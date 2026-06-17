@@ -13,13 +13,13 @@ from ReadSTORMBin import read_storm_bin
 # 这个程序只考虑二维扩散速率的情况，在二维扩散里做双组分分析
 # 在Step2处理的时候，一定要PCA = 1，即把所有的扩散都当二维扩散处理
 # displacement threshold
-disp_thre = 5
+disp_thre = 4
 
 # diffusion rate map upper lower limit
-d_high = 4
+d_high = 1
 d_low = 0
 pixel_size = 115 # unit is nm
-time_interval = 0.00532  # unit is s, so 1 ms
+time_interval = 0.006298  # unit is s, so 1 ms
 
 # point cloud point size
 point_size = 0.1
@@ -28,7 +28,7 @@ point_size = 0.1
 component = 2  # 1 one component, 2 two component
 
 # percentage of molecules shown, to accelerate
-per_mol_shown = 0.1 # 0 to 1
+per_mol_shown = 0.01 # 0 to 1
 
 app = wx.App()
 frame = wx.Frame(None, -1, 'win.py')

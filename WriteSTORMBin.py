@@ -44,3 +44,20 @@ def Write_STORMbin(file_path, total_number, frame_num, x, y, xc, yc, height, are
     f.write(arr_2)
     f.write(arr)
     f.close()
+    
+def Write_STORMbin_Packed(file_path, total_number, frame_num, original_mol_list):
+    
+    data_type = np.dtype([('X', np.float32), ('Y', np.float32), ('Xc', np.float32), ('Yc', np.float32),
+                   ('Height', np.float32), ('Area', np.float32), ('Width', np.float32), ('Phi', np.float32), 
+                   ('Ax', np.float32), ('BG', np.float32), ('I', np.float32), ('Category', np.int32), 
+                   ('Valid', np.int32), ('Frame', np.int32), ('Length', np.int32), ('Link', np.int32), 
+                   ('Z', np.float32), ('Zc', np.float32)])
+    
+    write_header = np.array([892482637,frame_num,6,total_number],dtype=np.int32)
+    
+    f = open(file_path,"wb")
+    arr = bytearray(original_mol_list)
+    arr_2 = bytearray(write_header)
+    f.write(arr_2)
+    f.write(arr)
+    f.close()

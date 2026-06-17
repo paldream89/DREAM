@@ -13,10 +13,10 @@ Created on Sat Jun 27 10:31:38 2020
 """
 
 # data_type = np.dtype([('X', np.float32), ('Y', np.float32), ('Xc', np.float32), ('Yc', np.float32),
-#                    ('Height', np.float32), ('Area', np.float32), ('Width', np.float32), ('Phi', np.float32), 
-#                    ('Ax', np.float32), ('BG', np.float32), ('I', np.float32), ('Category', np.int32), 
-#                    ('Valid', np.int32), ('Frame', np.int32), ('Length', np.int32), ('Link', np.int32), 
-#                    ('Z', np.float32), ('Zc', np.float32)])
+#                     ('Height', np.float32), ('Area', np.float32), ('Width', np.float32), ('Phi', np.float32), 
+#                     ('Ax', np.float32), ('BG', np.float32), ('I', np.float32), ('Category', np.int32), 
+#                     ('Valid', np.int32), ('Frame', np.int32), ('Length', np.int32), ('Link', np.int32), 
+#                     ('Z', np.float32), ('Zc', np.float32)])
 
 import numpy as np
 from ReadSTORMBin import read_storm_bin
@@ -38,7 +38,7 @@ openFileDialog.ShowModal()
 file_path_list = openFileDialog.GetPaths()
 openFileDialog.Destroy()
 
-disp_thre = 5
+disp_thre = 6
 
 for file_path in file_path_list:
 
@@ -46,9 +46,10 @@ for file_path in file_path_list:
     start_time = time.time()
     total_frame, total_mol_num, original_mol_list = read_storm_bin(file_path)
     total_frame = total_frame.item()
+    # total_frame = 480000
     total_mol_num = total_mol_num.item()
     
-    estimated_total_num = 25*total_frame
+    estimated_total_num = 100*total_frame
     result_array_x_start = np.zeros(estimated_total_num,dtype=np.float32)
     result_array_y_start = np.zeros(estimated_total_num,dtype=np.float32)
     result_array_x_end = np.zeros(estimated_total_num,dtype=np.float32)

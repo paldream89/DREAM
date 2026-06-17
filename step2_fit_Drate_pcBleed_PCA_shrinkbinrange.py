@@ -40,23 +40,23 @@ if __name__=="__main__":
     file_path_list = openFileDialog.GetPaths()
     openFileDialog.Destroy()
     
-    # image bin size setting
-    pixel_size = 115 # unit is nm
-    image_bin_size = 1.02 # unit is pixel
+    # image setting
+    pixel_size = 114 # unit is nm
+    image_bin_size = 1.0 # unit is pixel
     true_bin_size = int(pixel_size*image_bin_size/2) 
     # it is also the diameter for bleeding_Gaussian
     # image_bin_size is designed to be 2*FWHM
+    disp_thre = 7
+    time_interval = 0.006 # unit is s, so 1 ms
     
     # minimal point number to perform fitting
     min_points_percell = 30
     
     # sortig into an arry first to speed up, maximum points per cell
-    sorting_thre = 500
+    sorting_thre = 1000
     
     # 0, do not add; 1, add one center point; 3, add three points
-    mode_trigger = 3
-    disp_thre = 5
-    time_interval = 0.005208 # unit is s, so 1 ms
+    mode_trigger = 0
     
     # histogram binning setting
     hist_bin_num = 4*disp_thre # must be an interger
@@ -65,7 +65,7 @@ if __name__=="__main__":
     bin_thre = int(floor((disp_thre*0.6)/hist_bin_size))  # for guessed initial fitting parameters
     
     # pca analysis threshold
-    pca_ratio_thre = 0.99
+    pca_ratio_thre = 0.6
     
     # fitting error threshold
     fitting_error = 0.5
@@ -220,10 +220,10 @@ if __name__=="__main__":
 # averaged_angle_start,averaged_points_start,averaged_histogram_start,
 
     # data_type = np.dtype([('X', np.float32), ('Y', np.float32), ('Xc', np.float32), ('Yc', np.float32),
-    #                ('Height', np.float32), ('Area', np.float32), ('Width', np.float32), ('Phi', np.float32), 
-    #                ('Ax', np.float32), ('BG', np.float32), ('I', np.float32), ('Category', np.int32), 
-    #                ('Valid', np.int32), ('Frame', np.int32), ('Length', np.int32), ('Link', np.int32), 
-    #                ('Z', np.float32), ('Zc', np.float32)])
+    #                 ('Height', np.float32), ('Area', np.float32), ('Width', np.float32), ('Phi', np.float32), 
+    #                 ('Ax', np.float32), ('BG', np.float32), ('I', np.float32), ('Category', np.int32), 
+    #                 ('Valid', np.int32), ('Frame', np.int32), ('Length', np.int32), ('Link', np.int32), 
+    #                 ('Z', np.float32), ('Zc', np.float32)])
         
         hist_map = (np.vstack((averaged_hist_array[:,5:5+hist_bin_num].astype(np.int32),averaged_hist_array[:,10+hist_bin_num:10+2*hist_bin_num].astype(np.int32))))[remove_unuseful_indice]
         save_file_hist_map = file_path.replace('.bin','-HistPCABd'+'-Add'+str(mode_trigger)+\

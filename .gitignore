@@ -1,0 +1,16 @@
+*.dax
+*.bin
+*.tif
+*.tiff
+*.npy
+*.h5
+*.hdf5
+*.mat
+*.nd2
+*.czi
+*.lif
+*.zip
+*.rar
+*.7z
+__pycache__/
+*.pyc

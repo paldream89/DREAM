@@ -18,20 +18,24 @@ import numpy as np
 from math import floor,sqrt,e,pi
 from scipy import optimize
 import matplotlib.path as mpltPath
+import matplotlib as mpl
 import wx
 from ReadSTORMBin import read_storm_bin
 
 # displacement threshold
-disp_thre = 9
+disp_thre = 5
 
 # diffusion rate map upper lower limit
-d_high = 30
+d_high = 6
 d_low = 0
-pixel_size = 110 # unit is nm
-time_interval = 0.001  # unit is s, so 1 ms
+pixel_size = 114 # unit is nm
+time_interval = 0.00515  # unit is s, so 1 ms
 
 # point cloud point size
-point_size = 1
+point_size = 0.1
+
+# percentage of molecules shown, to accelerate
+per_mol_shown = 0.01 # 0 to 1
 
 app = wx.App()
 frame = wx.Frame(None, -1, 'win.py')
@@ -75,11 +79,15 @@ def twoD_diff_dis_func(x,a,b,c):
     
     return 2*c*x/a*np.exp(-x**2/a)+b*x
 
-cmap = plt.cm.jet
+shown_mol_num = int(number_of_points*per_mol_shown)
+cmap = mpl.colormaps["jet"]
 cmap.set_under(color='black')
 cmap.set_bad(color='black')
-plt.scatter(STORM_npdata['Xc'],STORM_npdata['Yc'],cmap=cmap,s=point_size,
-            c=STORM_npdata['Zc'],vmin = d_low,vmax = d_high)
+yc_max = np.amax(STORM_npdata['Yc'])
+STORM_npdata['Yc'] = yc_max-STORM_npdata['Yc'] # flip yc
+plt.scatter(STORM_npdata['Xc'][0:shown_mol_num],STORM_npdata['Yc'][0:shown_mol_num],
+            cmap=cmap,s=point_size,
+            c=STORM_npdata['Zc'][0:shown_mol_num],vmin = d_low,vmax = d_high)
 
 plt.show()
 
@@ -192,7 +200,7 @@ def onRelease(event):
     print('Release')
     
 lineprops = {'color':'red','linewidth':1,'alpha':0.6}
-lsso = LassoSelector(ax=ax,onselect=onSelect,lineprops = lineprops,button=1)
+lsso = LassoSelector(ax=ax,onselect=onSelect,props = lineprops,button=1)
 
 fig.canvas.mpl_connect('button_press_event',onPress)
 fig.canvas.mpl_connect('button_release_event',onRelease)

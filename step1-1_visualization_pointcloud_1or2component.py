@@ -30,6 +30,10 @@ def twoD_diff_dis_func_double(x,a,b,c,a2,c2):
     
     return 2*c*x/a*np.exp(-x**2/a)+2*c2*x/a2*np.exp(-x**2/a2)+b*x
 
+def twoD_diff_dis_func_triple(x,a,b,c,a2,c2,a3,c3):
+    
+    return 2*c*x/a*np.exp(-x**2/a)+2*c2*x/a2*np.exp(-x**2/a2)+2*c3*x/a3*np.exp(-x**2/a3)+b*x
+
 
 # displacement threshold
 disp_thre = 5
@@ -37,14 +41,17 @@ disp_thre = 5
 # diffusion rate map upper lower limit
 d_high = disp_thre
 d_low = 0
-pixel_size = 115 # unit is nm
-time_interval = 0.00704 # unit is s, so 1 ms
-component = 2 # 1 or 2 component?
+pixel_size = 114 # unit is nm
+time_interval = 0.0054347# unit is s, so 1 ms
+component = 2 # 1 or 2 or 3 component?
 # point cloud point size
-point_size = 0.01
+point_size = 0.2
+
+# accelerate figure speed
+num_points_showedRatio = 10
 
 # histogram binning setting
-bin_num = disp_thre*4 # must be an interger
+bin_num = disp_thre*10 # must be an interger
 bin_size = disp_thre/bin_num 
 bins_x = np.arange(0.5*bin_size, disp_thre, bin_size, dtype=np.float32)
 bin_thre = int(floor((disp_thre*0.6)/bin_size))
@@ -57,6 +64,16 @@ angle_bins_x = np.arange(-pi+0.5*angle_bin_size, pi, angle_bin_size, dtype=np.fl
 angle_bin_size_plot = 360/angle_bin_num
 angle_bins_x_plot = np.arange(-180+0.5*angle_bin_size_plot, 
                               180, angle_bin_size_plot, dtype=np.float32)
+
+color_blue = (0/255, 114/255, 178/255)
+color_red = (213/255, 94/255, 0/255)
+color_blue2 = (51/255, 51/255, 255/255)
+color_red2 = (255/255, 51/255, 51/255)
+color_purple = (204/255, 121/255, 167/255)
+color_orange = (230/255, 159/255, 0/255)
+color_green = (0/255, 158/255, 115/255)
+color_skyblue = (86/255, 180/255, 233/255)
+color_grey = (160/255, 160/255, 160/255)
 
 # initialize saved data
 drate_hist_array = np.zeros((angle_bin_num,bin_num),dtype=np.uint32) 
@@ -80,7 +97,9 @@ frame_num, number_of_points, STORM_npdata = read_storm_bin_XcYcZZcFrame(file_pat
         # data_type = np.dtype([('x_start', np.float32), ('y_start', np.float32),
         #                   ('x_end', np.float32), ('y_end', np.float32),
         #                   ('frame', np.int32),
-        #                   ('disp', np.float32), ('angle', np.float32)])    
+        #                   ('disp', np.float32), ('angle', np.float32)])   
+        
+num_showed = int(number_of_points/num_points_showedRatio)
         
 cmap = mpl.colormaps["jet"]
 cmap.set_under(color='black')
@@ -91,8 +110,8 @@ STORM_npdata['y_start'] = y_max-STORM_npdata['y_start']
 STORM_npdata['y_end'] = y_max-STORM_npdata['y_end']
 x_max = np.amax((STORM_npdata['x_start'],STORM_npdata['x_end']))
 plt.figure(figsize=(10/250*x_max,10/250*y_max))
-plt.scatter(STORM_npdata['x_start'],STORM_npdata['y_start'],cmap=cmap,s=point_size,
-            c=STORM_npdata['disp'],vmin = d_low,vmax = d_high)
+plt.scatter(STORM_npdata['x_start'][0:num_showed],STORM_npdata['y_start'][0:num_showed],cmap=cmap,s=point_size,
+            c=STORM_npdata['disp'][0:num_showed],vmin = d_low,vmax = d_high)
 
 plt.show()
 
@@ -150,8 +169,31 @@ def onSelect(x):
         
         # drate_hist_array[cursor_angle-1,:] = np.uint32(hist)
         
-        plt.figure()
-        plt.bar(bins_x,hist,width=bin_size*0.8)
+        fig, ax = plt.subplots(figsize=(9, 4))
+        # fig.patch.set_alpha(0.0)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        
+        # 显示刻度线，但不显示数值
+        
+        x_min = 0
+        x_max = disp_thre # 确保包含数据的最大范围
+        x_ticks = np.arange(x_min, x_max+0.1, 1)  # 生成间隔为 0.5 的刻度
+        # # 设置 x 轴刻度
+        ax.set_xlim([x_min, x_max])
+        ax.set_xticks(x_ticks)# 显示刻度线，但不显示数值
+        ax.yaxis.set_tick_params(labelsize=0, size=4, width=4, color='black')  # 仅显示刻度线
+
+        # 显示刻度线，但不显示数值
+        ax.xaxis.set_tick_params(labelsize=0, size=4, width=4, color='black')  # 仅显示刻度线        ax.xaxis.set_tick_params(labelsize=0, size=5, width=1, color='black')
+        
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(True)
+        ax.spines['bottom'].set_visible(True)
+        ax.spines['left'].set_linewidth(4)
+        ax.spines['bottom'].set_linewidth(4)
+        plt.bar(bins_x,hist,width=bin_size*0.8, color=color_green,alpha=0.5)
         plt.show()
         
         if component == 1:
@@ -231,12 +273,24 @@ def onSelect(x):
                 np.savetxt(fname,save_hist,fmt='%.5f',delimiter=' ',newline='\n')
                 print('Fitted Curve:')
                 print('2*%.0f*x/%.5f*exp(-x^2/%.5f)+%.0f*x+2*%.0f*x/%.5f*exp(-x^2/%.5f)' %(popt[2],popt[0],popt[0],popt[1],popt[4],popt[3],popt[3]))
-                plt.plot(smooth_x, fitted_y,'k')
-                plt.plot(smooth_x, distribution_y,'r--')
-                plt.plot(smooth_x, distribution_y2,'m--')
-                plt.plot(smooth_x, background_y,'b--')
+                
+                plt.plot(smooth_x, fitted_y,color=color_grey,
+                         linestyle='-', linewidth=5)
+                plt.plot(smooth_x, distribution_y,color=color_red2,
+                         linestyle='--', linewidth=5)
+                plt.plot(smooth_x, distribution_y2,color=color_blue2,
+                         linestyle='--', linewidth=5)
+                plt.plot(smooth_x, background_y,color=color_purple,
+                         linestyle='--', linewidth=5)
+                
+                
+                ##===========绘图设置================
+                
+                
                 plt.show()
                 print('Totol Mol Num='+str(total_mol_select_1)+'='+str(total_mol_select_2))
+                
+                
                 
             except RuntimeError:
                 

@@ -181,3 +181,45 @@ def disp_angle_calculator_Z_Zvalue(odd_frame_array_Xc,odd_frame_array_Yc,
     return correlate_num, return_array_x_start,return_array_y_start,\
         return_array_x_end,return_array_y_end, return_array_frame,\
             return_array_disp,return_array_angle
+            
+def disp_angle_calculator_XY(odd_frame_array_Xc,odd_frame_array_Yc,even_frame_array_Xc,
+                          even_frame_array_Yc,len_odd,len_even,disp_threX,disp_threY,frame_number):
+    
+    # distance_matrix = np.sqrt((odd_frame_array_Xc[None,:]-even_frame_array_Xc[:,None])**2
+    # +(odd_frame_array_Yc[None,:]-even_frame_array_Yc[:,None])**2)
+    
+    distance_X = -(odd_frame_array_Xc[None, :] - even_frame_array_Xc[:, None])
+    distance_Y = -(odd_frame_array_Yc[None, :] - even_frame_array_Yc[:, None])
+    distance_X_abs = np.abs(odd_frame_array_Xc[None, :] - even_frame_array_Xc[:, None])
+    distance_Y_abs = np.abs(odd_frame_array_Yc[None, :] - even_frame_array_Yc[:, None])
+
+    disp_thre_bool = (distance_X_abs < disp_threX) & (distance_Y_abs < disp_threY)
+    
+    even_indice,odd_indice = np.mgrid[:len_even,:len_odd]
+    
+    return_array_disp_all = distance_X[disp_thre_bool]
+
+    rng = np.random.default_rng()
+    random_index = rng.permutation(len(return_array_disp_all))
+    
+    return_array_x_start_all = odd_frame_array_Xc[odd_indice[disp_thre_bool]][random_index]
+    
+    _,unique_index = np.unique(return_array_x_start_all,return_index=True)
+    
+    return_array_x_start = return_array_x_start_all[unique_index]
+    return_array_x_end = even_frame_array_Xc[even_indice[disp_thre_bool]][random_index]\
+        [unique_index]
+    return_array_y_start = odd_frame_array_Yc[odd_indice[disp_thre_bool]][random_index]\
+        [unique_index]
+    return_array_y_end = even_frame_array_Yc[even_indice[disp_thre_bool]][random_index]\
+        [unique_index]
+    return_array_disp = return_array_disp_all[random_index][unique_index]
+    
+    correlate_num = len(return_array_x_start)
+    return_array_frame = np.full((correlate_num,),frame_number)
+    # return_array_angle = np.arctan2((return_array_y_end-return_array_y_start),(return_array_x_end-return_array_x_start))
+    return_array_angle = distance_Y[disp_thre_bool][random_index][unique_index]
+    
+    return correlate_num, return_array_x_start,return_array_y_start,\
+        return_array_x_end,return_array_y_end, return_array_frame,\
+            return_array_disp,return_array_angle

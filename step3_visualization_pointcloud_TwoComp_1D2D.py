@@ -12,13 +12,13 @@ from ReadSTORMBin import read_storm_bin
 # 请注意！！！！！！！！！！！
 # 这个程序一维和二维都考虑在内
 # displacement threshold
-disp_thre = 5
+disp_thre = 6
 
 # diffusion rate map upper lower limit
-d_high = 4
+d_high = 3
 d_low = 0
 pixel_size = 115 # unit is nm
-time_interval = 0.0061349  # unit is s, so 1 ms
+time_interval = 0.01087  # unit is s, so 1 ms
 
 # point cloud point size
 point_size = 0.1
