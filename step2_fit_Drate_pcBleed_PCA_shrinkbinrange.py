@@ -46,8 +46,8 @@ if __name__=="__main__":
     true_bin_size = int(pixel_size*image_bin_size/2) 
     # it is also the diameter for bleeding_Gaussian
     # image_bin_size is designed to be 2*FWHM
-    disp_thre = 7
-    time_interval = 0.006 # unit is s, so 1 ms
+    disp_thre = 6
+    time_interval = 0.0058 # unit is s, so 1 ms
     
     # minimal point number to perform fitting
     min_points_percell = 30
@@ -55,11 +55,8 @@ if __name__=="__main__":
     # sortig into an arry first to speed up, maximum points per cell
     sorting_thre = 1000
     
-    # 0, do not add; 1, add one center point; 3, add three points
-    mode_trigger = 0
-    
     # histogram binning setting
-    hist_bin_num = 4*disp_thre # must be an interger
+    hist_bin_num = 3*disp_thre # must be an interger
     hist_bin_size = disp_thre/hist_bin_num 
     bins_x = np.arange(0.5*hist_bin_size, disp_thre, hist_bin_size, dtype=np.float32)
     bin_thre = int(floor((disp_thre*0.6)/hist_bin_size))  # for guessed initial fitting parameters
@@ -79,6 +76,9 @@ if __name__=="__main__":
     
     saved_data_type = np.dtype([('xc', np.float32), ('yc', np.float32),('frame', np.int32),
                           ('diffusion', np.float32), ('angle', np.float32), ('points', np.int32)])
+                          
+    # 0
+    mode_trigger = 0
     
     for file_path in file_path_list:
     

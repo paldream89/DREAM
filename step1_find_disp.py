@@ -31,7 +31,7 @@ openFileDialog.ShowModal()
 file_path_list = openFileDialog.GetPaths()
 openFileDialog.Destroy()
 
-disp_thre = 10
+disp_thre = 6
 
 for file_path in file_path_list:
 
